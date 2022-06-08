@@ -22,7 +22,8 @@ body {
 /* === LAYOUT === */
 
 header {
-    position: absolute;
+    position: fixed;
+    z-index: 100;
 
     flex-direction: row;
     justify-content: center;
@@ -58,7 +59,7 @@ main {
 /* SEARCH BAR CONTENT */
 
 .searchbar {
-    position: absolute;
+    position: fixed;
     top: 18vh;
     max-width: 700px;
     height: 2.5em;

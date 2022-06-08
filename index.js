@@ -5,10 +5,9 @@ const searchForm = document.getElementById("search-form");
 const searchContent = document.getElementById("search-results-content");
 
 let idsArr;
-let moviesArr;
 
 const getMoviesArr = async () => {
-  const data = Promise.all(
+  const data = await Promise.all(
     idsArr.map(
       async (movieId) =>
         await (
@@ -35,96 +34,113 @@ const displayResults = async (e) => {
     );
 
     const moviesArr = await getMoviesArr();
-    [
-      {
-        Actors,
-        Awards,
-        BoxOffice,
-        Country,
-        DVD,
-        Director,
-        Genre,
-        Language,
-        Metascore,
-        Plot,
-        Poster,
-        Production,
-        Rated,
-        Ratings,
-        Released,
-        Response,
-        Runtime,
-        Title,
-        Type,
-        Website,
-        Writer,
-        Year,
-        imdbID,
-        imdbRating,
-        imdbVotes,
-      },
-    ] = moviesArr;
 
     const moviesHtml = moviesArr
       .map((movie) => {
         return `
           <article class="width-wrapper flexbox">
-            <div class="movie-items flexbox">
-              <div class="movie-images"><img src="${movie.Poster}"></div>
-              <div class="movie-side flexbox">
-                <div class="movie-title-row flexbox">
-                  <h2 class="movie-title">${movie.Title}</h2>
-                  <span class="movie-rating">${movie.imdbRating}</span>
-                </div>
-                <div class="movie-data-row flexbox">
-                  <span class="movie-duration">${movie.Runtime}</span>
-                  <span class="movie-genres">${movie.Genre}</span>
-                  <button class="add-btn" id="${movie.imdbID}" type="button">
-                    Add to watchlist
-                  </button>
-                </div>
-                <div class="movie-desc-row">
-                  <p class="movie-desc">${movie.Plot}</p>
-                </div>
-              </div>
-            </div>
+          <div class="movie-items flexbox">
+          <div class="movie-images"><img src="${movie.Poster}"></div>
+          <div class="movie-side flexbox">
+          <div class="movie-title-row flexbox">
+          <h2 class="movie-title">${movie.Title}</h2>
+          <span class="movie-rating">${movie.imdbRating}</span>
+          </div>
+          <div class="movie-data-row flexbox">
+          <span class="movie-duration">${movie.Runtime}</span>
+          <span class="movie-genres">${movie.Genre}</span>
+          <button class="add-btn" id="${movie.imdbID}" type="button">
+          Add to watchlist
+          </button>
+          </div>
+          <div class="movie-desc-row">
+          <p class="movie-desc">${movie.Plot}</p>
+          </div>
+          </div>
+          </div>
           </article>`;
       })
       .join("");
-
     searchContent.innerHTML = moviesHtml;
 
     const addBtnsArr = document.getElementsByClassName("add-btn");
     for (const addBtn of addBtnsArr) {
-      addBtn.addEventListener("click", () => console.log("clicked!"));
+      addBtn.addEventListener("click", function () {
+        const idToAdd = this.id;
+        this.disabled = true;
+        if (localStorage.getItem("wishlist-ids") === null) {
+          localStorage.setItem("wishlist-ids", JSON.stringify([idToAdd]));
+        } else {
+          let wishlistIdsArr = JSON.parse(localStorage.getItem("wishlist-ids"));
+          wishlistIdsArr.push(idToAdd);
+          localStorage.setItem("wishlist-ids", JSON.stringify(wishlistIdsArr));
+        }
+      });
     }
   } else {
-    console.log(data.Error);
+    searchContent.textContent = data.Error;
   }
 };
+
+goToWishlistBtn.addEventListener(
+  "click",
+  () => (location.href = "/wishlist.html")
+);
 
 searchBtn.addEventListener("click", displayResults);
 
 // TODO: results in the OMDb: n (up top)
 
+// === ICE ===
+
 /* <article class="width-wrapper flexbox">
-  <div class="movie-items flexbox">
-    <div class="movie-images">Movie image</div>
-    <div class="movie-side flexbox">
-      <div class="movie-title-row flexbox">
-        <h2 class="movie-title">Movie title</h2>
-        <span class="movie-rating">Movie rating</span>
-      </div>
-      <div class="movie-data-row flexbox">
-        <span class="movie-duration">51 min</span>
-        <span class="movie-genres">Drama, Sci-fi</span>
-        <button class="add-btn" type="button">
-          Add to watchlist
-        </button>
-      </div>
-      <div class="movie-desc-row">
-        <p class="movie-desc">Movie description</p>
-      </div>
-    </div>
-  </div>
+<div class="movie-items flexbox">
+<div class="movie-images">Movie image</div>
+<div class="movie-side flexbox">
+<div class="movie-title-row flexbox">
+<h2 class="movie-title">Movie title</h2>
+<span class="movie-rating">Movie rating</span>
+</div>
+<div class="movie-data-row flexbox">
+<span class="movie-duration">51 min</span>
+<span class="movie-genres">Drama, Sci-fi</span>
+<button class="add-btn" type="button">
+Add to watchlist
+</button>
+</div>
+<div class="movie-desc-row">
+<p class="movie-desc">Movie description</p>
+</div>
+</div>
+</div>
 </article>; */
+
+// [
+//   {
+//     Actors,
+//     Awards,
+//     BoxOffice,
+//     Country,
+//     DVD,
+//     Director,
+//     Genre,
+//     Language,
+//     Metascore,
+//     Plot,
+//     Poster,
+//     Production,
+//     Rated,
+//     Ratings,
+//     Released,
+//     Response,
+//     Runtime,
+//     Title,
+//     Type,
+//     Website,
+//     Writer,
+//     Year,
+//     imdbID,
+//     imdbRating,
+//     imdbVotes,
+//   },
+// ] = moviesArr;
